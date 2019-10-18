@@ -17,7 +17,8 @@ class Task extends Model
 
     protected $table = 'tasks';
 
-    public function tasks() {
-        return $this->hasMany(Task::class);
+    public function project() {
+        return $this->belongsTo(Project::class);
     }
+
 }
