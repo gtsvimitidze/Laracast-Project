@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Project extends Model
+class Task extends Model
 {
     /**
      * The table associated with the model.
@@ -15,5 +15,9 @@ class Project extends Model
     protected $guarded = [];
     // protected $fillable = [ 'title' , 'description' ];
 
-    protected $table = 'projects';
+    protected $table = 'tasks';
+
+    public function tasks() {
+        return $this->hasMany(Task::class);
+    }
 }

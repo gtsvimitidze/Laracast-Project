@@ -19,37 +19,59 @@ class ProjectsController extends Controller
         return view('projects.create');
     }
 
-    public function show() {
-
+    public function show(Project $project) {
+        
+        return view('projects.show', compact('project'));
     }
 
-    public function edit($id) { // example.com/projects/1/edit
+    public function edit(Project $project) { // example.com/projects/1/edit
         
-        $project = Project::find($id);
         return view('projects.edit', compact('project') );
 
     }
 
-    public function update($id) { // example.com/projects/1/edit
-        
-        $project = Project::find($id);
-        $project->title = request('title');
-        $project->description = request('description');
-        $project->save();
+    public function update(Project $project) { // example.com/projects/1/edit
+
+        $attribute = request()->validate([
+            'title' => ['required', 'min:3', 'max:255'],
+            'description' => ['required', 'min:3', 'max:255']
+        ]);
+        $project->update($attribute);
+
+        // $project->title = request('title');
+        // $project->description = request('description');
+        // $project->save();
+
         return redirect('/projects');
+
         // dd( request()->all() );
     }
 
-    public function destroy() {
-
+    public function destroy(Project $project) {
+        
+        $project->delete();
+        // dd('hello' . $id );
+        return redirect('/projects');
     }
 
     public function store() {
-        $project = new Project();
-        $project->title         = request('title');
-        $project->description   = request('description');
 
-        $project->save();
+        $attribute = request()->validate([
+            'title' => ['required', 'min:3', 'max:255'],
+            'description' => ['required', 'min:3', 'max:255']
+        ]);
+        Project::create($attribute);
+        
+        // Project::create([ 
+        //     'title' => request('title'),
+        //     'description' => request('description'),
+        // ]);
+
+        // $project = new Project();
+        // $project->title         = request('title');
+        // $project->description   = request('description');
+
+        // $project->save();
 
         return redirect('/projects');
         // return request()->all();
