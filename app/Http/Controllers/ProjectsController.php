@@ -9,9 +9,13 @@ use Illuminate\Filesystem\Filesystem;
 
 class ProjectsController extends Controller
 {
+    public function __construct() {
+        $this->middleware('auth')->only(['store']); //except([]);
+    }
     public function index() {
         
-        $projects = Project::all();
+        // $projects = Project::all();
+        $projects = Project::where('owner_id', auth()->id())->get();
         return view('projects.index', compact('projects') );
 
     }
@@ -22,9 +26,11 @@ class ProjectsController extends Controller
     }
 
     public function show(Project $project, Twitter $twitter) {
-        // $twitter = app('Twitter');
+        $this->authorize('view', $project);
 
-        dd($twitter);
+        // abort_unless(auth()->user()->owns($project), 403);
+        
+        // abort_if(\Gate:allows('update', $project), 403)
 
         return view('projects.show', compact('project'));
     }
@@ -46,6 +52,7 @@ class ProjectsController extends Controller
             'title' => ['required', 'min:3', 'max:255'],
             'description' => ['required', 'min:3', 'max:255']
         ]);
+        
         $project->update($attribute);
 
         // $project->title = request('title');
@@ -66,11 +73,13 @@ class ProjectsController extends Controller
 
     public function store() {
 
-        $attribute = request()->validate([
+        $attributes = request()->validate([
             'title' => ['required', 'min:3', 'max:255'],
             'description' => ['required', 'min:3', 'max:255']
         ]);
-        Project::create($attribute);
+        $attributes['owner_id'] = auth()->id();
+
+        Project::create($attributes);
         
         // Project::create([ 
         //     'title' => request('title'),
