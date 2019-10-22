@@ -4,6 +4,7 @@
 @section('content')
     <h1> {{ $project->title }} </h1>
 
+    <a href="/projects">პროექტები</a>
     <div>
         {{ $project->description }}
     </div>
@@ -16,9 +17,12 @@
         <div style="border: 1px solid grey; padding: 10px" class="box">
             @foreach($project->tasks as $task) 
                 <div>
-                    <form action="/tasks/{{ $task->id }}" method="POST">
+                    <form action="/completed-tasks/{{ $task->id }}" method="POST">
+                        @if($task->completed)
+                            @method('DELETE')
+                        @endif
 
-                        @method('PATCH')
+
                         @csrf
 
                         <label for="completed" class="checkbox">
